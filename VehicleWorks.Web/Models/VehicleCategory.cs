@@ -6,9 +6,9 @@ public class VehicleCategory
 
     public string Name { get; set; } = string.Empty;
 
-    public int MinWeightKg { get; set; }
+    public decimal MinWeightKg { get; set; }
 
-    public int MaxWeightKg { get; set; }
+    public decimal MaxWeightKg { get; set; }
 
     public string Icon { get; set; } = string.Empty;
 }
