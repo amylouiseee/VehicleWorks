@@ -16,6 +16,7 @@ public class Vehicle
     [Required]
     public int YearOfManufacture { get; set; }
 
-    [Required, Range(0.01, double.MaxValue)]
+    [Required]
+    [Range(0.01, double.MaxValue)]
     public decimal WeightKg { get; set; }
 }
