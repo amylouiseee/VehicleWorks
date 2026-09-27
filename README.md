@@ -3,12 +3,18 @@ This application is a simple app to manage vehicles and their weight categories.
 
 ## Tech stack
 Frontend:
-- .NET 10
 - Blazor
+- HTML
+- CSS
+- C#
 
 Backend:
+- ASP.NET Core
 - C#
-- MS SQL Server 2022 through Docker
+- MS SQL Server 2022
+- Entity Framework Core
+- Docker
+- EF Core Migrations
 
 ## Initial setup 🛠️
 ### Prerequisities
