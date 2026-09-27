@@ -12,4 +12,5 @@ public class AppDbContext : DbContext
 
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<VehicleCategory> VehicleCategories => Set<VehicleCategory>();
+    public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
 }

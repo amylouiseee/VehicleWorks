@@ -4,9 +4,12 @@ public class Vehicle
 {
     public int Id { get; set; }
 
-    public string Make { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
 
-    public string Model { get; set; } = string.Empty;
+    public int ManufacturerId { get; set; }
+    public Manufacturer Manufacturer { get; set; } = null!;
 
-    public int WeightKg { get; set; }
+    public int YearOfManufacture { get; set; }
+
+    public decimal WeightKg { get; set; }
 }
