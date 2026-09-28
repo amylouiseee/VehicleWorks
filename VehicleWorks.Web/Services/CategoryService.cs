@@ -79,36 +79,6 @@ public class CategoryService
         return null;
     }
 
-    public async Task<bool> HasValidRangeAsync(VehicleCategory category)
-    {
-        if (category.MinWeightKg < 0)
-            return false;
-
-        if (category.MaxWeightKg.HasValue &&
-            category.MaxWeightKg <= category.MinWeightKg)
-            return false;
-
-        var categories = await GetAllAsync();
-
-        categories = categories
-            .Where(c => c.Id != category.Id)
-            .OrderBy(c => c.MinWeightKg)
-            .ToList();
-
-        foreach (var existing in categories)
-        {
-            var overlaps =
-                category.MinWeightKg <= existing.MaxWeightKg &&
-                (category.MaxWeightKg == null ||
-                existing.MinWeightKg <= category.MaxWeightKg);
-
-            if (overlaps)
-                return false;
-        }
-
-        return true;
-    }
-
     private bool HasValidCategorySet(List<VehicleCategory> categories)
     {
         if (categories.Count == 0)
