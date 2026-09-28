@@ -27,10 +27,24 @@ public class CategoryService
         return true;
     }
 
-    public async Task UpdateAsync(VehicleCategory category)
+    public async Task<bool> UpdateAsync(VehicleCategory category)
     {
+        var categories = await GetAllAsync();
+
+        var existing = categories.FirstOrDefault(c => c.Id == category.Id);
+
+        if (existing == null)
+            return false;
+
+        categories[categories.IndexOf(existing)] = category;
+
+        if (!HasValidCategorySet(categories))
+            return false;
+
         _db.VehicleCategories.Update(category);
         await _db.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task DeleteAsync(int id)
