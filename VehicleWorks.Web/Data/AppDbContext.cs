@@ -21,6 +21,14 @@ public class AppDbContext : DbContext
         builder.Entity<Vehicle>()
             .Property(v => v.WeightKg)
             .HasPrecision(10, 2);
+
+        builder.Entity<VehicleCategory>()
+                .Property(c => c.MinWeightKg)
+                .HasPrecision(10, 2);
+
+            builder.Entity<VehicleCategory>()
+                .Property(c => c.MaxWeightKg)
+                .HasPrecision(10, 2);
         
         // Seed data for manufacturers, this can be edited to include more manufacturers as needed.
         builder.Entity<Manufacturer>().HasData(

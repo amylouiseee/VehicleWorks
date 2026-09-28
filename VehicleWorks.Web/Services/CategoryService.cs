@@ -13,6 +13,19 @@ public class CategoryService
         _db = db;
     }
 
+    public async Task<List<VehicleCategory>> GetAllAsync()
+    {
+        return await _db.VehicleCategories
+            .OrderBy(c => c.MinWeightKg)
+            .ToListAsync();
+    }
+
+    public async Task<VehicleCategory?> GetByIdAsync(int id)
+    {
+        return await _db.VehicleCategories
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
     public async Task<VehicleCategory?> GetCategoryForWeightAsync(decimal weightKg)
     {
         return await _db.VehicleCategories
