@@ -13,6 +13,29 @@ public class VehicleService
         _db = db;
     }
 
+    public async Task AddAsync(Vehicle vehicle)
+    {
+        _db.Vehicles.Add(vehicle);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(Vehicle vehicle)
+    {
+        _db.Vehicles.Update(vehicle);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var vehicle = await GetByIdAsync(id);
+
+        if (vehicle == null)
+            return;
+
+        _db.Vehicles.Remove(vehicle);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task<List<Vehicle>> GetAllAsync()
     {
         return await _db.Vehicles
@@ -26,11 +49,5 @@ public class VehicleService
         return await _db.Vehicles
             .Include(v => v.Manufacturer)
             .FirstOrDefaultAsync(v => v.Id == id);
-    }
-
-    public async Task AddAsync(Vehicle vehicle)
-    {
-        _db.Vehicles.Add(vehicle);
-        await _db.SaveChangesAsync();
     }
 }
