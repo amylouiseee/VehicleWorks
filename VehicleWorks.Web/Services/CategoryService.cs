@@ -47,15 +47,24 @@ public class CategoryService
         return true;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         var category = await GetByIdAsync(id);
 
         if (category == null)
-            return;
+            return false;
+
+        var categories = await GetAllAsync();
+
+        categories.RemoveAll(c => c.Id == id);
+
+        if (!HasValidCategorySet(categories))
+            return false;
 
         _db.VehicleCategories.Remove(category);
         await _db.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<List<VehicleCategory>> GetAllAsync()
