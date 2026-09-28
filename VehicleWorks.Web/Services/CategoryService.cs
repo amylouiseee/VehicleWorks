@@ -13,10 +13,18 @@ public class CategoryService
         _db = db;
     }
 
-    public async Task AddAsync(VehicleCategory category)
+    public async Task<bool> AddAsync(VehicleCategory category)
     {
+        var categories = await GetAllAsync();
+        categories.Add(category);
+
+        if (!HasValidCategorySet(categories))
+            return false;
+
         _db.VehicleCategories.Add(category);
         await _db.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task UpdateAsync(VehicleCategory category)
@@ -101,13 +109,16 @@ public class CategoryService
         return true;
     }
 
-    public async Task<bool> HasValidCategoriesAsync()
+    private bool HasValidCategorySet(List<VehicleCategory> categories)
     {
-        var categories = await GetAllAsync();
-
         if (categories.Count == 0)
             return false;
 
+        categories = categories
+            .OrderBy(c => c.MinWeightKg)
+            .ToList();
+
+        // First category must start at 0
         if (categories[0].MinWeightKg != 0)
             return false;
 
@@ -116,13 +127,16 @@ public class CategoryService
             var current = categories[i];
             var next = categories[i + 1];
 
+            // Every category except the last must have a maximum
             if (current.MaxWeightKg == null)
                 return false;
 
+            // Next category must start exactly 0.01 kg after current
             if (next.MinWeightKg != current.MaxWeightKg + 0.01m)
                 return false;
         }
 
+        // Last category must have no maximum
         return categories[^1].MaxWeightKg == null;
     }
 }
