@@ -38,5 +38,34 @@ public class AppDbContext : DbContext
         new Manufacturer { Id = 4, Name = "Ferrari" },
         new Manufacturer { Id = 5, Name = "Toyota" }
     );
+    
+    // Seed data for vehicle categories, this can be edited to change category limits as needed.
+    builder.Entity<VehicleCategory>().HasData(
+        new VehicleCategory
+        {
+            Id = 1,
+            Name = "Light",
+            MinWeightKg = 0,
+            MaxWeightKg = 500,
+            Icon = "🚗"
+        },
+        new VehicleCategory
+        {
+            Id = 2,
+            Name = "Medium",
+            MinWeightKg = 500.01m,
+            MaxWeightKg = 2500,
+            Icon = "🚙"
+        },
+        new VehicleCategory
+        {
+            Id = 3,
+            Name = "Heavy",
+            MinWeightKg = 2500.01m,
+            MaxWeightKg = null,
+            Icon = "🚚"
+        }
+    );
+
     }
 }

@@ -28,9 +28,78 @@ public class CategoryService
 
     public async Task<VehicleCategory?> GetCategoryForWeightAsync(decimal weightKg)
     {
-        return await _db.VehicleCategories
-            .FirstOrDefaultAsync(c =>
-                c.MinWeightKg <= weightKg &&
-                c.MaxWeightKg >= weightKg);
+        var categories = await GetAllAsync();
+
+        foreach (var category in categories)
+        {
+            bool isFirstCategory = category.MinWeightKg == 0;
+
+            bool aboveMinimum = isFirstCategory
+                ? weightKg >= category.MinWeightKg
+                : weightKg > category.MinWeightKg;
+
+            bool belowMaximum = category.MaxWeightKg == null ||
+                                weightKg <= category.MaxWeightKg;
+
+            if (aboveMinimum && belowMaximum)
+                return category;
+        }
+
+        return null;
+    }
+
+    public async Task<bool> HasValidRangeAsync(VehicleCategory category)
+    {
+        if (category.MinWeightKg < 0)
+            return false;
+
+        if (category.MaxWeightKg.HasValue &&
+            category.MaxWeightKg <= category.MinWeightKg)
+            return false;
+
+        var categories = await GetAllAsync();
+
+        categories = categories
+            .Where(c => c.Id != category.Id)
+            .OrderBy(c => c.MinWeightKg)
+            .ToList();
+
+        foreach (var existing in categories)
+        {
+            var overlaps =
+                category.MinWeightKg <= existing.MaxWeightKg &&
+                (category.MaxWeightKg == null ||
+                existing.MinWeightKg <= category.MaxWeightKg);
+
+            if (overlaps)
+                return false;
+        }
+
+        return true;
+    }
+
+    public async Task<bool> HasValidCategoriesAsync()
+    {
+        var categories = await GetAllAsync();
+
+        if (categories.Count == 0)
+            return false;
+
+        if (categories[0].MinWeightKg != 0)
+            return false;
+
+        for (int i = 0; i < categories.Count - 1; i++)
+        {
+            var current = categories[i];
+            var next = categories[i + 1];
+
+            if (current.MaxWeightKg == null)
+                return false;
+
+            if (next.MinWeightKg != current.MaxWeightKg + 0.01m)
+                return false;
+        }
+
+        return categories[^1].MaxWeightKg == null;
     }
 }
