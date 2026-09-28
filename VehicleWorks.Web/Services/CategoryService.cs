@@ -13,6 +13,29 @@ public class CategoryService
         _db = db;
     }
 
+    public async Task AddAsync(VehicleCategory category)
+    {
+        _db.VehicleCategories.Add(category);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(VehicleCategory category)
+    {
+        _db.VehicleCategories.Update(category);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var category = await GetByIdAsync(id);
+
+        if (category == null)
+            return;
+
+        _db.VehicleCategories.Remove(category);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task<List<VehicleCategory>> GetAllAsync()
     {
         return await _db.VehicleCategories
