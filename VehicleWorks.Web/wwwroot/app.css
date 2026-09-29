@@ -58,3 +58,54 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.vehicle-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 500px;
+}
+
+.vehicle-form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vehicle-table-container {
+    margin-top: 24px;
+    overflow-x: auto;
+}
+
+.vehicle-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.vehicle-table th {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid #ddd;
+    font-weight: 600;
+}
+
+.vehicle-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.vehicle-table tbody tr:hover {
+    background-color: #f8f8f8;
+}
+
+.vehicle-sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.vehicle-sort select {
+    padding: 6px 10px;
+}

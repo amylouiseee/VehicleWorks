@@ -19,6 +19,10 @@ public class AppDbContext : DbContext
         base.OnModelCreating(builder);
 
         builder.Entity<Vehicle>()
+            .Property(v => v.Id)
+            .ValueGeneratedOnAdd();
+
+        builder.Entity<Vehicle>()
             .Property(v => v.WeightKg)
             .HasPrecision(10, 2);
 

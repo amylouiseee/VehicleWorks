@@ -11,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<VehicleService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ManufacturerService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

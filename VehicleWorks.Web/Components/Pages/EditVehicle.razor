@@ -1,0 +1,84 @@
+@page "/vehicles/edit/{id:int}"
+@rendermode InteractiveServer
+
+@using VehicleWorks.Web.Models
+@using VehicleWorks.Web.Services
+
+@inject VehicleService VehicleService
+@inject ManufacturerService ManufacturerService
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Vehicle</PageTitle>
+
+<h1>Edit Vehicle</h1>
+
+@if (vehicle == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="vehicle"
+              OnValidSubmit="HandleSubmit"
+              FormName="edit-vehicle"
+              class="vehicle-form">
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Owner Name</label>
+            <InputText @bind-Value="vehicle.OwnerName" />
+        </div>
+
+        <div>
+            <label>Manufacturer</label>
+            <InputSelect @bind-Value="vehicle.ManufacturerId">
+                <option value="">Select manufacturer</option>
+
+                @foreach (var manufacturer in manufacturers)
+                {
+                    <option value="@manufacturer.Id">
+                        @manufacturer.Name
+                    </option>
+                }
+            </InputSelect>
+        </div>
+
+        <div>
+            <label>Year of Manufacture</label>
+            <InputNumber @bind-Value="vehicle.YearOfManufacture" />
+        </div>
+
+        <div>
+            <label>Weight (kg)</label>
+            <InputNumber @bind-Value="vehicle.WeightKg" step="0.01" />
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Vehicle? vehicle;
+    private List<Manufacturer> manufacturers = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        vehicle = await VehicleService.GetByIdAsync(id);
+        manufacturers = await ManufacturerService.GetAllAsync();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (vehicle == null)
+            return;
+
+        await VehicleService.UpdateAsync(vehicle);
+
+        Navigation.NavigateTo("/vehicles");
+    }
+}

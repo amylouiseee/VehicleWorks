@@ -1,7 +1,11 @@
 @page "/vehicles"
+@rendermode InteractiveServer
+@using Microsoft.JSInterop
 @using VehicleWorks.Web.Models
 @using VehicleWorks.Web.Services
 @inject VehicleService VehicleService
+@inject CategoryService CategoryService
+@inject IJSRuntime JS
 
 <PageTitle>Vehicles</PageTitle>
 
@@ -17,35 +21,135 @@ else if (vehicles.Count == 0)
 }
 else
 {
-    <table>
-        <thead>
-            <tr>
-                <th>Owner</th>
-                <th>Manufacturer</th>
-                <th>Year</th>
-                <th>Weight (kg)</th>
-            </tr>
-        </thead>
+    <div class="vehicle-table-container">
 
-        <tbody>
-            @foreach (var vehicle in vehicles)
-            {
+        <div class="vehicle-sort">
+            <label for="sort">Sort by:</label>
+
+            <select id="sort" @onchange="SortVehicles">
+                <option value="owner">Owner</option>
+                <option value="manufacturer">Manufacturer</option>
+                <option value="year">Year</option>
+                <option value="weight">Weight</option>
+            </select>
+
+            <select @onchange="SortDirectionChanged">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+
+        <table class="vehicle-table">
+            <thead>
                 <tr>
-                    <td>@vehicle.OwnerName</td>
-                    <td>@vehicle.Manufacturer.Name</td>
-                    <td>@vehicle.YearOfManufacture</td>
-                    <td>@vehicle.WeightKg</td>
+                    <th>Owner</th>
+                    <th>Manufacturer</th>
+                    <th>Year</th>
+                    <th>Weight (kg)</th>
+                    <th>Category</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                @foreach (var vehicle in vehicles)
+                {
+                    <tr>
+                        <td>@vehicle.OwnerName</td>
+                        <td>@vehicle.Manufacturer.Name</td>
+                        <td>@vehicle.YearOfManufacture</td>
+                        <td>@vehicle.WeightKg</td>
+                        <td>
+                            @if (vehicle.Category != null)
+                            {
+                                <span>
+                                    @vehicle.Category.Icon
+                                    @vehicle.Category.Name
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@($"/vehicles/edit/{vehicle.Id}")">Edit</a>
+                            <button type="button" @onclick="() => DeleteVehicle(vehicle.Id)">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
     private List<Vehicle>? vehicles;
+    private List<VehicleCategory> categories = [];
 
     protected override async Task OnInitializedAsync()
     {
         vehicles = await VehicleService.GetAllAsync();
+        categories = await CategoryService.GetAllAsync();
+
+        foreach (var vehicle in vehicles)
+        {
+            vehicle.Category = categories.FirstOrDefault(category =>
+                vehicle.WeightKg >= category.MinWeightKg &&
+                (category.MaxWeightKg == null ||
+                 vehicle.WeightKg <= category.MaxWeightKg));
+        }
+    }
+
+    private async Task DeleteVehicle(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirm",
+            "Are you sure you want to delete this vehicle?");
+
+        if (!confirmed)
+            return;
+
+        await VehicleService.DeleteAsync(id);
+
+        vehicles = await VehicleService.GetAllAsync();
+    }
+
+    private string sortBy = "owner";
+    private bool ascending = true;
+
+    private void SortVehicles(ChangeEventArgs e)
+    {
+        sortBy = e.Value?.ToString() ?? "owner";
+        ApplySort();
+    }
+
+    private void SortDirectionChanged(ChangeEventArgs e)
+    {
+        ascending = e.Value?.ToString() == "asc";
+        ApplySort();
+    }
+
+    private void ApplySort()
+    {
+        if (vehicles == null)
+            return;
+
+        vehicles = sortBy switch
+        {
+            "manufacturer" => ascending
+                ? vehicles.OrderBy(v => v.Manufacturer.Name).ToList()
+                : vehicles.OrderByDescending(v => v.Manufacturer.Name).ToList(),
+
+            "year" => ascending
+                ? vehicles.OrderBy(v => v.YearOfManufacture).ToList()
+                : vehicles.OrderByDescending(v => v.YearOfManufacture).ToList(),
+
+            "weight" => ascending
+                ? vehicles.OrderBy(v => v.WeightKg).ToList()
+                : vehicles.OrderByDescending(v => v.WeightKg).ToList(),
+
+            _ => ascending
+                ? vehicles.OrderBy(v => v.OwnerName).ToList()
+                : vehicles.OrderByDescending(v => v.OwnerName).ToList()
+        };
     }
 }
