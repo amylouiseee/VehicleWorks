@@ -1,0 +1,51 @@
+@page "/vehicles"
+@using VehicleWorks.Web.Models
+@using VehicleWorks.Web.Services
+@inject VehicleService VehicleService
+
+<PageTitle>Vehicles</PageTitle>
+
+<h1>Vehicles</h1>
+
+@if (vehicles == null)
+{
+    <p>Loading...</p>
+}
+else if (vehicles.Count == 0)
+{
+    <p>No vehicles have been added yet.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Owner</th>
+                <th>Manufacturer</th>
+                <th>Year</th>
+                <th>Weight (kg)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var vehicle in vehicles)
+            {
+                <tr>
+                    <td>@vehicle.OwnerName</td>
+                    <td>@vehicle.Manufacturer.Name</td>
+                    <td>@vehicle.YearOfManufacture</td>
+                    <td>@vehicle.WeightKg</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Vehicle>? vehicles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        vehicles = await VehicleService.GetAllAsync();
+    }
+}
