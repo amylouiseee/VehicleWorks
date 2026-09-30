@@ -1,0 +1,112 @@
+@page "/categories/edit/{id:int}"
+
+@rendermode InteractiveServer
+
+@using VehicleWorks.Web.Models
+@using VehicleWorks.Web.Services
+
+@inject CategoryService CategoryService
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Category</PageTitle>
+
+<h1>Edit Category</h1>
+
+@if (category == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="category"
+              OnValidSubmit="HandleSubmit"
+              FormName="edit-category"
+              class="vehicle-form">
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Category Name</label>
+            <InputText @bind-Value="category.Name" />
+        </div>
+
+        <div>
+            <label>Minimum Weight (kg)</label>
+            <InputNumber @bind-Value="category.MinWeightKg" />
+
+            @if (!string.IsNullOrEmpty(minWeightError))
+            {
+                <div class="validation-message">
+                    @minWeightError
+                </div>
+            }
+        </div>
+
+        <div>
+            <label>Maximum Weight (kg)</label>
+            <InputNumber @bind-Value="category.MaxWeightKg" />
+            <small>Leave empty for no maximum.</small>
+
+            @if (!string.IsNullOrEmpty(maxWeightError))
+            {
+                <div class="validation-message">
+                    @maxWeightError
+                </div>
+            }
+        </div>
+
+        <div>
+            <label>Icon</label>
+            <InputText @bind-Value="category.Icon" />
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private VehicleCategory? category;
+
+    private string? minWeightError;
+    private string? maxWeightError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.GetByIdAsync(id);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (category == null)
+            return;
+
+        minWeightError = null;
+        maxWeightError = null;
+
+        // Maximum is optional, but if provided it must be greater than minimum
+        if (category.MaxWeightKg.HasValue &&
+            category.MaxWeightKg.Value <= category.MinWeightKg)
+        {
+            maxWeightError =
+                "Maximum weight must be greater than the minimum weight.";
+
+            return;
+        }
+
+        var success = await CategoryService.UpdateAsync(category);
+
+        if (!success)
+        {
+            minWeightError =
+                "The minimum weight cannot be used with the current category ranges.";
+
+            return;
+        }
+
+        Navigation.NavigateTo("/categories");
+    }
+}

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleWorks.Web.Data;
 
@@ -10,9 +11,11 @@ using VehicleWorks.Web.Data;
 namespace VehicleWorks.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260930052850_UpdateCategoryBoundaries")]
+    partial class UpdateCategoryBoundaries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,14 +139,14 @@ namespace VehicleWorks.Web.Migrations
                             Id = 2,
                             Icon = "🚙",
                             MaxWeightKg = 2500m,
-                            MinWeightKg = 500m,
+                            MinWeightKg = 500.01m,
                             Name = "Medium"
                         },
                         new
                         {
                             Id = 3,
                             Icon = "🚚",
-                            MinWeightKg = 2500m,
+                            MinWeightKg = 2500.01m,
                             Name = "Heavy"
                         });
                 });

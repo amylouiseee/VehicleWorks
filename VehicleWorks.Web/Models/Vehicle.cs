@@ -19,6 +19,8 @@ public class Vehicle
     [Range(1900, 2100, ErrorMessage = "Please enter a valid year.")]
     public int? YearOfManufacture { get; set; }
 
+    [RegularExpression(@"^\d+(\.\d{1,2})?$",
+    ErrorMessage = "Weight can have a maximum of 2 decimal places.")]
     [Required(ErrorMessage = "Weight is required.")]
     [Range(0.01, double.MaxValue, ErrorMessage = "Weight must be greater than 0.")]
     public decimal? WeightKg { get; set; }

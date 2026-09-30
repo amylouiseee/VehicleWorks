@@ -92,10 +92,12 @@ else
 
         foreach (var vehicle in vehicles)
         {
-            vehicle.Category = categories.FirstOrDefault(category =>
-                vehicle.WeightKg >= category.MinWeightKg &&
-                (category.MaxWeightKg == null ||
-                 vehicle.WeightKg <= category.MaxWeightKg));
+            if (vehicle.WeightKg.HasValue)
+            {
+                vehicle.Category = CategoryService.GetCategoryForWeight(
+                    vehicle.WeightKg.Value,
+                    categories);
+            }
         }
     }
 

@@ -1,0 +1,104 @@
+@page "/categories"
+@rendermode InteractiveServer
+@using VehicleWorks.Web.Models
+@using VehicleWorks.Web.Services
+@inject CategoryService CategoryService
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+
+<PageTitle>Categories</PageTitle>
+
+<h1>Vehicle Categories</h1>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="validation-message">
+        @errorMessage
+    </div>
+}
+
+@if (categories == null)
+{
+    <p>Loading...</p>
+}
+else if (categories.Count == 0)
+{
+    <p>No categories have been created.</p>
+}
+else
+{
+    <table class="vehicle-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Minimum Weight (kg)</th>
+                <th>Maximum Weight (kg)</th>
+                <th>Icon</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var category in categories)
+            {
+                <tr>
+                    <td>@category.Name</td>
+                    <td>@category.MinWeightKg</td>
+                    <td>
+                        @(category.MaxWeightKg?.ToString() ?? "No maximum")
+                    </td>
+                    <td>@category.Icon</td>
+                    <td>
+                        <a href="@($"/categories/edit/{category.Id}")">
+                            Edit
+                        </a>
+
+                        <button type="button"
+                                @onclick="() => DeleteCategory(category.Id)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<VehicleCategory>? categories;
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetAllAsync();
+    }
+
+    private async Task DeleteCategory(int id)
+    {
+        errorMessage = null;
+
+        var category = categories?.FirstOrDefault(c => c.Id == id);
+
+        if (category == null)
+            return;
+
+        bool confirmed = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"Are you sure you want to delete the '{category.Name}' category?");
+
+        if (!confirmed)
+            return;
+
+        var success = await CategoryService.DeleteAsync(id);
+
+        if (success)
+        {
+            categories = await CategoryService.GetAllAsync();
+        }
+        else
+        {
+            errorMessage = "The category could not be deleted.";
+        }
+    }
+}

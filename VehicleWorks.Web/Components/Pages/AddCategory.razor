@@ -1,0 +1,91 @@
+@page "/categories/add"
+@rendermode InteractiveServer
+
+@using VehicleWorks.Web.Models
+@using VehicleWorks.Web.Services
+
+@inject CategoryService CategoryService
+
+<PageTitle>Add Category</PageTitle>
+
+<h1>Add Category</h1>
+
+<EditForm Model="category"
+          OnValidSubmit="HandleSubmit"
+          FormName="add-category"
+          class="vehicle-form">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Category Name</label>
+        <InputText @bind-Value="category.Name" />
+    </div>
+
+    <div>
+        <label>Minimum Weight (kg)</label>
+        <InputNumber @bind-Value="category.MinWeightKg" />
+
+        @if (!string.IsNullOrEmpty(minWeightError))
+            {
+                <div class="validation-message">
+                    @minWeightError
+                </div>
+            }
+    </div>
+
+    <div>
+        <label>Maximum Weight (kg)</label>
+        <InputNumber @bind-Value="category.MaxWeightKg" />
+        <small>Leave empty for no maximum.</small>
+
+        @if (!string.IsNullOrEmpty(maxWeightError))
+        {
+            <div class="validation-message">
+                @maxWeightError
+            </div>
+        }
+    </div>
+
+    <div>
+        <label>Icon</label>
+        <InputText @bind-Value="category.Icon" />
+    </div>
+
+    <button type="submit">Add Category</button>
+</EditForm>
+
+@code {
+    private VehicleCategory category = new();
+
+    private string? minWeightError;
+    private string? maxWeightError;
+
+    private async Task HandleSubmit()
+    {
+        minWeightError = null;
+        maxWeightError = null;
+
+        if (category.MaxWeightKg.HasValue &&
+            category.MaxWeightKg.Value <= category.MinWeightKg)
+        {
+            maxWeightError =
+                "Maximum weight must be greater than the minimum weight.";
+
+            return;
+        }
+
+        var success = await CategoryService.AddAsync(category);
+
+        if (!success)
+        {
+            minWeightError =
+                "The category cannot be added because it would create an invalid range.";
+
+            return;
+        }
+
+        category = new VehicleCategory();
+    }
+}

@@ -57,7 +57,7 @@ public class AppDbContext : DbContext
         {
             Id = 2,
             Name = "Medium",
-            MinWeightKg = 500.01m,
+            MinWeightKg = 500,
             MaxWeightKg = 2500,
             Icon = "🚙"
         },
@@ -65,7 +65,7 @@ public class AppDbContext : DbContext
         {
             Id = 3,
             Name = "Heavy",
-            MinWeightKg = 2500.01m,
+            MinWeightKg = 2500,
             MaxWeightKg = null,
             Icon = "🚚"
         }
