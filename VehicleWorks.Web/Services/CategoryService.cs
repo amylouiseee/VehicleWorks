@@ -290,7 +290,7 @@ public class CategoryService
         return null;
     }
 
-    private bool HasValidCategorySet(List<VehicleCategory> categories)
+    public bool HasValidCategorySet(List<VehicleCategory> categories)
     {
         if (categories.Count == 0)
             return false;
