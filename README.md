@@ -76,6 +76,7 @@ dotnet test
 
 The automated tests cover vehicle validation, category assignment, category range validation, and category add/edit/delete behaviour.
 
+## Design decisions
 ### Category boundary rule
 
 Category ranges use shared boundaries, but a shared boundary belongs to the category below it.
@@ -87,7 +88,27 @@ For example:
 * `2500.00 kg` → Medium
 * `2500.01 kg` → Heavy
 
+### Dynamic boundary calculation
 Category ranges can be modified through the application. The neighbouring category boundaries are automatically adjusted to maintain complete weight coverage without gaps or overlaps.
+
+For example, if the categories are initially:
+
+* Light: 0–500 kg
+* Medium: 500–2500 kg
+* Heavy: 2500 kg–No maximum
+
+If Medium is changed to have a maximum of 2000 kg, the Heavy category automatically updates to start at 2000 kg:
+
+* Light: 0–500 kg
+* Medium: 500–2000 kg
+* Heavy: 2000 kg–No maximum
+
+This dynamic category editing also occurs when adding or deleting categories.
+
+### What I would add next
+* A service to edit the list of manufacturers available to select so this can be done by the end user rather than via a code/production database change.
+* More fields to the vehicle cateogry, such as registration number, WOF expiry, registration expiry, last service date.
+* A more modern user interface, for the purposes of this assignment I've kept it as the default Blazor template.
 
 ## Application features
 
