@@ -130,11 +130,10 @@ public class CategoryService
 
         if (index < categories.Count - 1)
         {
-            if (!categories[index].MaxWeightKg.HasValue)
+            if (categories[index].MaxWeightKg is not decimal maxWeight)
                 return false;
 
-            categories[index + 1].MinWeightKg =
-                categories[index].MaxWeightKg.Value;
+            categories[index + 1].MinWeightKg = maxWeight;
         }
 
         // Validate the complete proposed configuration

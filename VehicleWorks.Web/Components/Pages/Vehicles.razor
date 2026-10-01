@@ -56,7 +56,7 @@ else
                 {
                     <tr>
                         <td>@vehicle.OwnerName</td>
-                        <td>@vehicle.Manufacturer.Name</td>
+                        <td>@vehicle.Manufacturer?.Name</td>
                         <td>@vehicle.YearOfManufacture</td>
                         <td>@vehicle.WeightKg</td>
                         <td>
@@ -138,8 +138,8 @@ else
         vehicles = sortBy switch
         {
             "manufacturer" => ascending
-                ? vehicles.OrderBy(v => v.Manufacturer.Name).ToList()
-                : vehicles.OrderByDescending(v => v.Manufacturer.Name).ToList(),
+                ? vehicles.OrderBy(v => v.Manufacturer?.Name).ToList()
+                : vehicles.OrderByDescending(v => v.Manufacturer?.Name).ToList(),
 
             "year" => ascending
                 ? vehicles.OrderBy(v => v.YearOfManufacture).ToList()
