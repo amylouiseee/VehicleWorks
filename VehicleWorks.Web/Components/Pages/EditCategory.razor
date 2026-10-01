@@ -58,7 +58,15 @@ else
 
         <div>
             <label>Icon</label>
-            <InputText @bind-Value="category.Icon" />
+            <InputSelect @bind-Value="category.Icon">
+                <option value="">Select an icon</option>
+                <option value="🚗">🚗 Car</option>
+                <option value="🚙">🚙 SUV</option>
+                <option value="🚚">🚚 Truck</option>
+                <option value="🏎️">🏎️ Race car</option>
+                <option value="🚐">🚐 Van</option>
+                <option value="🚌">🚌 Bus</option>
+            </InputSelect>
         </div>
 
         <button type="submit">Save Changes</button>
