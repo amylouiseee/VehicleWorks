@@ -36,41 +36,35 @@ VehicleWorks is a simple web application for managing vehicles and their weight 
    cd VehicleWorks.Web
    ```
 
-5. Initialise user secrets:
-
-   ```bash
-   dotnet user-secrets init
-   ```
-
-6. Add the database connection string, replacing `REPLACE_PASSWORD` with the same password used in `.env`:
+5. Add the database connection string, replacing `REPLACE_PASSWORD` with the same password used in `.env`:
 
    ```bash
    dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=VehicleWorks;User Id=sa;Password=REPLACE_PASSWORD;TrustServerCertificate=True"
    ```
 
-7. Restore the local .NET tool:
+6. Restore the local .NET tool:
 
    ```bash
    dotnet tool restore
    ```
 
-8. Return to the repository root and start SQL Server:
+7. Return to the repository root and start SQL Server:
    ```bash
    cd ..
    docker compose up -d
    ```
-9. Apply the Entity Framework database migrations:
+8. Apply the Entity Framework database migrations:
 
    ```bash
    dotnet ef database update --project VehicleWorks.Web
    ```
-10. Start the application:
+9. Start the application:
 
 ```bash
 dotnet run --project VehicleWorks.Web
 ```
 
-11. Open the application at:
+10. Open the application at:
 `http://localhost:5058`
 
 ## Running the tests 🧪
